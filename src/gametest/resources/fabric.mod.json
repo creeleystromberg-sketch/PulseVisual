@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "pulsevisual-test",
+  "version": "1.0.0",
+  "name": "PulseVisual regression tests",
+  "environment": "client",
+  "entrypoints": { "fabric-client-gametest": ["dev.pulsevisual.test.VisualGameTest"] },
+  "depends": { "pulsevisual": "*" }
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "pulsevisual",
+  "version": "${version}",
+  "name": "PulseVisual",
+  "description": "Client-only visual effects, animated crosshair and HUD cosmetics.",
+  "authors": ["PulseVisual"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["dev.pulsevisual.PulseVisualClient"] },
+  "mixins": ["pulsevisual.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "=1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

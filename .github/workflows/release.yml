@@ -1,0 +1,40 @@
+name: Build and release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: pulsevisual-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build and regression tests
+        run: bash ./gradlew build --no-daemon --console=plain
+      - name: Publish new version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(sed -n 's/^mod_version=//p' gradle.properties | tr -d '\r')
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          tag="v$version"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Version already published; bump mod_version to publish changes."
+            exit 0
+          fi
+          jar="build/libs/pulsevisual-$version.jar"
+          sha=$(sha256sum "$jar" | cut -d ' ' -f 1)
+          jq -n --arg version "$version" --arg sha "$sha" '{version:$version,minecraft:"1.21.11",loader:"fabric",sha256:$sha}' > pulsevisual-update.json
+          git archive --format=zip --prefix=PulseVisual/ HEAD > "PulseVisual-$version-sources.zip"
+          gh release create "$tag" "$jar" pulsevisual-update.json "PulseVisual-$version-sources.zip" --target "$GITHUB_SHA" --title "PulseVisual $version" --notes-file RELEASE_NOTES.md
