@@ -66,7 +66,9 @@ public final class PearlTracer {
             if(trail==null){
                 if(TRAILS.size()>=MAX_PEARLS)continue;
                 trail=new Trail(pearl);TRAILS.put(pearl.getId(),trail);
-                trail.add(new Vec3(pearl.xo,pearl.yo,pearl.zo),now-50_000_000L);
+                // Spawn packets may not have initialized previous-tick coordinates yet.
+                if(pearl.tickCount>0 && pearl.position().distanceToSqr(pearl.xo,pearl.yo,pearl.zo)<9)
+                    trail.add(new Vec3(pearl.xo,pearl.yo,pearl.zo),now-50_000_000L);
             }
             if(tick%stride==0 || trail.count==0)trail.add(pearl.position(),now);
         }
@@ -105,11 +107,12 @@ public final class PearlTracer {
                 double dx=x-px,dy=y-py,dz=z-pz,cx=camera.x-(px+x)*.5,cy=camera.y-(py+y)*.5,cz=camera.z-(pz+z)*.5;
                 double nx=dy*cz-dz*cy,ny=dz*cx-dx*cz,nz=dx*cy-dy*cx;
                 double norm=Math.sqrt(nx*nx+ny*ny+nz*nz);
-                if(norm>1e-8){
+                if(norm>1e-8 && camera.distanceToSqr(px,py,pz)>.36 && camera.distanceToSqr(x,y,z)>.36){
                     nx/=norm;ny/=norm;nz/=norm;
                     // Keep distant paths legible without making nearby throws bulky.
                     float distance=(float)Math.sqrt(cx*cx+cy*cy+cz*cz);
                     float width=Math.max(c.width,Math.min(c.width*3,distance*.0018f))*(.35f+.65f*fraction);
+                    width*=Math.min(1,distance/2);
                     if(c.glow || "Glow".equals(c.mode))strip(out,matrix,px,py,pz,x,y,z,nx,ny,nz,width*3,color,alpha*.12f);
                     strip(out,matrix,px,py,pz,x,y,z,nx,ny,nz,width,color,alpha*.65f);
                     strip(out,matrix,px,py,pz,x,y,z,nx,ny,nz,width*.5f,ColorUtil.mix(color,0xFFFFFFFF,.35f),alpha);

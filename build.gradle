@@ -39,6 +39,7 @@ tasks.register('updateRegression', JavaExec) {
     dependsOn testClasses
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'dev.pulsevisual.UpdateRegressionTest'
+    if (project.hasProperty('verifyRelease')) args project.property('verifyRelease')
 }
 check.dependsOn updateRegression
 // This suite is a dependency-free executable, not a JUnit-discovered test.

@@ -25,5 +25,20 @@ public final class UpdateRegressionTest {
             jar(staged,"pulsevisual","2.1.0");rejected=false;try{AutoUpdater.validateJar(staged,"2.2.0");}catch(IllegalArgumentException expected){rejected=true;}check(rejected);
         }finally{try(var entries=Files.list(dir)){for(Path p:entries.toList())Files.deleteIfExists(p);}Files.delete(dir);}
         System.out.println("PASS: "+checks+" updater checks (version, hash, identity, replacement, backup)");
+        if(args.length==1){
+            var download=AutoUpdater.class.getDeclaredMethod("download",java.net.http.HttpClient.class,String.class,int.class);download.setAccessible(true);
+            try(var http=java.net.http.HttpClient.newBuilder().followRedirects(java.net.http.HttpClient.Redirect.NORMAL).build()){
+                String base="https://github.com/"+AutoUpdater.REPOSITORY+"/releases/";
+                byte[] json=(byte[])download.invoke(null,http,base+"latest/download/pulsevisual-update.json",65536);
+                var manifest=com.google.gson.JsonParser.parseString(new String(json,StandardCharsets.UTF_8)).getAsJsonObject();
+                String version=manifest.get("version").getAsString();check(version.equals(args[0]));check(AutoUpdater.newer(version,"2.1.0"));
+                Path actual=Files.createTempFile("pulsevisual-published-",".jar");
+                try{
+                    Files.write(actual,(byte[])download.invoke(null,http,base+"download/v"+version+"/pulsevisual-"+version+".jar",16*1024*1024));
+                    check(UpdateInstaller.hash(actual).equals(manifest.get("sha256").getAsString()));AutoUpdater.validateJar(actual,version);
+                    System.out.println("PASS: published GitHub manifest, download, checksum and mod identity "+version);
+                }finally{Files.deleteIfExists(actual);}
+            }
+        }
     }
 }

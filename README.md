@@ -1,4 +1,4 @@
-# PulseVisual 2.2.0
+# PulseVisual 2.2.1
 
 Client-side visual mod for Minecraft Java **1.21.11**, Fabric Loader **0.19.5+**, Fabric API **0.141.6+1.21.11**, Java **21**. It does not alter attack speed, damage, movement, or server packets. No server installation is needed.
 
@@ -22,11 +22,11 @@ Hit effects are client predictions on attacking a living entity. The server may 
 
 ## Installation
 
-Place `pulsevisual-2.2.0.jar` and Fabric API for 1.21.11 in the selected profile's `mods` directory. Remove older `pulsevisual-*.jar` versions. On Windows the default directory is `%appdata%\.minecraft\mods`. Select a Fabric Loader 0.19.5+ profile for Minecraft 1.21.11 and restart the game.
+Place `pulsevisual-2.2.1.jar` and Fabric API for 1.21.11 in the selected profile's `mods` directory. Remove older `pulsevisual-*.jar` versions. On Windows the default directory is `%appdata%\.minecraft\mods`. Select a Fabric Loader 0.19.5+ profile for Minecraft 1.21.11 and restart the game.
 
 ## IntelliJ IDEA and Gradle
 
-Open this folder as a Gradle project and set **Gradle JVM = JDK 21**. Run `runClient` for a development client. Build with `gradlew.bat build` on Windows or `./gradlew build` on Linux/macOS. The distributable is `build/libs/pulsevisual-2.2.0.jar`. The `-sources.jar` is source code, not the installable mod.
+Open this folder as a Gradle project and set **Gradle JVM = JDK 21**. Run `runClient` for a development client. Build with `gradlew.bat build` on Windows or `./gradlew build` on Linux/macOS. The distributable is `build/libs/pulsevisual-2.2.1.jar`. The `-sources.jar` is source code, not the installable mod.
 
 `build` includes dependency-free timer/config regressions. `runClientGameTest` launches an isolated local world for real input, render and settings checks; screenshots are saved under `build/run/clientGameTest/screenshots`. The test mod is never packaged in the release jar.
 
@@ -38,6 +38,6 @@ All Java code and visuals in this project were written for PulseVisual; no third
 
 Repository: https://github.com/creeleystromberg-sketch/PulseVisual
 
-Install 2.2.0 once. The mod checks GitHub on startup and every 15 minutes, downloads a newer compatible stable release, verifies SHA-256 and mod metadata, then replaces its own jar after Minecraft closes. Restart to load it. A `.previous` backup remains beside the jar and is not loaded as a mod. Updates can be disabled under General. No GitHub login or token is required for players. Development clients do not auto-update.
+Install 2.2.1 once. The mod checks GitHub on startup and every 15 minutes, downloads a newer compatible stable release, verifies SHA-256 and mod metadata, then replaces its own jar after Minecraft closes. Restart to load it. A `.previous` backup remains beside the jar and is not loaded as a mod. Updates can be disabled under General. No GitHub login or token is required for players. Development clients do not auto-update.
 
 To publish future work, increment `mod_version` in `gradle.properties`, update `RELEASE_NOTES.md`, run the client game tests, and push to `main`. GitHub Actions builds, runs regressions, and publishes the jar, full sources and update manifest. Existing release versions are never overwritten. Changes only reach players after a successful release, not merely after editing local files.
